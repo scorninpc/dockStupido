@@ -6,6 +6,16 @@ dockStupido is a PHP-GTK dock, first write for Mate, but we planning to extend t
 
 Because I can! And because good docks is a death to create new applets.
 
+## What is missing?
+
+* Task list and pin icons are on initial dev
+* Finish application menu
+* Create a clock applet
+* Create a system tray applet
+* Create a sound applet
+* Create installer to auto-start easy 
+* Create an interface to configure config.json
+
 ## Installation
 
 Get [PHP-GTK3](https://github.com/scorninpc/php-gtk3), complie or get appimage (but be careful, appimage not always updated).
