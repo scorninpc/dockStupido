@@ -5,10 +5,12 @@ class desktopIni
 {
 	private $ini;
 	private $entry;
+	private $_file;
 
 	public function __construct($file, $lang)
 	{
 		$this->_lang = $lang;
+		$this->_file = $file;
 
 		$this->ini = $this->_parse_desktop_file($file);
 		$this->entry = $this->ini['Desktop Entry'];
@@ -37,6 +39,21 @@ class desktopIni
 		else {
 			return FALSE;
 		}
+	}
+
+	public function getDesktop()
+	{
+		return $this->_file;
+	}
+
+	public function getIcon()
+	{
+		$icon = $this->entry['Icon'];
+		if($icon) {
+			return $icon;
+		}
+
+		return FALSE;
 	}
 
 	public function getCategories()

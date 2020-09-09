@@ -28,9 +28,6 @@ class applications extends dockStupidoApplet
 		// Parse categories from mate
 		$systemCategories = $this->_parseSystemCategories("/etc/xdg/menus/mate-applications.menu");
 		
-		// Create start menu
-		$this->_menu = new \GtkMenu();
-
 		// Get .desktop from directory
 		$desktops = $this->_getDesktops("/usr/share/applications");
 		foreach($desktops as $desktop) {
@@ -38,13 +35,18 @@ class applications extends dockStupidoApplet
 			$entry = new desktopIni($desktop, $this->getLanguage());
 
 			if(!$entry->getDisplay()) {
-				echo "NODISPLAY: " . $desktop . "\n";
 				continue;
 			}
 
 			// Get name
 			$name = $entry->getName();
 			if(!$name) {
+				continue;
+			}
+
+			// Get icon
+			$icon = $entry->getIcon();
+			if(!$icon) {
 				continue;
 			}
 
@@ -64,7 +66,9 @@ class applications extends dockStupidoApplet
 					$systemCategory = $systemCategories[$category];
 
 					$this->_applications[$systemCategory][$name] = [
+						'desktop' => $desktop,
 						'name' => $name,
+						'icon' => $icon,
 					];
 
 					break;
@@ -78,13 +82,36 @@ class applications extends dockStupidoApplet
 				$this->_applications[$name] = $applications;
 			}
 
-			var_dump($this->_applications);
 		}
+
+		// Create start menu
+		$this->_menu = new \GtkMenu();
 
 		// Loop itens adding to menu
 		foreach($this->_applications as $name => $applications) {
+			// $menu = new \GtkMenu();
 
+			$submenu_item = \GtkMenuItem::new_with_label($name);
+			$this->_menu->append($submenu_item);
+
+			$menu = new \GtkMenu();
+			foreach($applications as $application) {
+
+				$item = \GtkMenuItem::new_with_label($application['name']);
+				$menu->append($item);
+
+				$item->connect("activate", function($button, $application) {
+
+					exec("gtk-launch " . basename($application['desktop'], ".desktop") . " > /dev/null &");
+
+				}, $application);
+
+			}
+			
+			$submenu_item->set_submenu($menu);
 		}
+
+		$this->_menu->show_all();
 
 
 /*
