@@ -86,18 +86,40 @@ class applications extends dockStupidoApplet
 
 		// Create start menu
 		$this->_menu = new \GtkMenu();
+		$this->_menu->set_reserve_toggle_size(FALSE);
 
 		// Loop itens adding to menu
 		foreach($this->_applications as $name => $applications) {
 			// $menu = new \GtkMenu();
 
-			$submenu_item = \GtkMenuItem::new_with_label($name);
+			$submenu_item = $this->_MenuIconMenu("applications-" . strtolower($name), $name);
+			// $submenu_item = \GtkMenuItem::new_with_label($name);
 			$this->_menu->append($submenu_item);
 
 			$menu = new \GtkMenu();
+			$menu->set_reserve_toggle_size(FALSE);
 			foreach($applications as $application) {
 
-				$item = \GtkMenuItem::new_with_label($application['name']);
+
+
+				$item = $this->_MenuIconMenu($application['icon'], $application['name']);
+				// $item = new \GtkMenuItem();
+
+				
+				// $box = new \GtkBox(\GtkOrientation::HORIZONTAL, 6);
+
+				// $image = \GtkImage::new_from_icon_name("applications-" . strtolower($name), \GtkIconSize::MENU);
+				// $box->pack_start($image, FALSE, FALSE);
+
+				// $label = new \GtkLabel($application['name']);
+				// $label->set_xalign(0);
+				// $box->pack_start($label, TRUE, TRUE);
+
+				// $item->add($box);
+
+
+
+				// $item = \GtkMenuItem::new_with_label($application['name']);
 				$menu->append($item);
 
 				$item->connect("activate", function($button, $application) {
@@ -308,6 +330,24 @@ class applications extends dockStupidoApplet
 		return $desktops;
 	}
 
+
+	private function _MenuIconMenu($icon, $label)
+	{
+		$item = new \GtkMenuItem();
+		
+		$box = new \GtkBox(\GtkOrientation::HORIZONTAL, 6);
+
+		$image = \GtkImage::new_from_icon_name($icon, \GtkIconSize::MENU);
+		$box->pack_start($image, FALSE, FALSE);
+
+		$item_label = new \GtkLabel($label);
+		$item_label->set_xalign(0);
+		$box->pack_start($item_label, TRUE, TRUE);
+
+		$item->add($box);
+
+		return $item;
+	}
 	
 
 }
