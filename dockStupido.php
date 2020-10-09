@@ -47,6 +47,22 @@ class dockStupido
 	 */
 	public function __construct()
 	{
+
+		// $pid = pcntl_fork();
+		// if($pid == -1)  {
+		// 	die("Couldn't fork()!");
+		// }
+		// else if ($pid) {
+		// 	exit(0);
+		// }
+
+		// posix_setsid();
+
+
+
+
+
+
 		$this->language = file_get_contents(getenv("HOME") . "/.config/user-dirs.locale");
 		
 		// $todo Load config from file
@@ -135,6 +151,7 @@ class dockStupido
 		$this->widgets['dock']->set_default_size($this->width, $this->height);
 		$this->widgets['dock']->set_decorated(FALSE);
 		$this->widgets['dock']->set_title($this->title);
+		$this->widgets['dock']->set_keep_above(TRUE);
 		if($this->getConfig()['debug']) {
 			$this->widgets['dock']->set_interactive_debugging(TRUE);
 		}

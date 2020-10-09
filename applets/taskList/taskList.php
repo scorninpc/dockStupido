@@ -44,6 +44,7 @@ class taskList extends dockStupidoApplet
 
 		// Load pinneds
 		$pinned = $this->getConfig()['pinned'];
+		$pinned = [];
 		foreach($pinned as $desktopFile) {
 			$content = parse_ini_file($desktopFile, FALSE, INI_SCANNER_RAW);
 
@@ -64,7 +65,7 @@ class taskList extends dockStupidoApplet
 			$image->set_pixel_size(24);
 			$this->pinnedButtons[$name]->set_image($image);
 			$this->pinnedButtons[$name]->set_tooltip_text($name);
-			$this->pinnedButtons[$name]->connect('clicked', function($button, $content) {
+			$this->pinnedButtons[$name]->connect('clicked', function($button, $content, $desktopFile) {
 
 				// Exec
 				if(isset($content['TryExec'])) {
@@ -73,9 +74,10 @@ class taskList extends dockStupidoApplet
 				else {
 					$exec = $content['Exec'];
 				}
-				exec($exec . " > /dev/null &");
+				
+				exec("gtk-launch " . basename($desktopFile, ".desktop") . " > /dev/null &");
 
-			}, $content);
+			}, $content, $desktopFile);
 
 			// Add css style 
 			$style_context = $this->pinnedButtons[$name]->get_style_context();
@@ -161,11 +163,30 @@ class taskList extends dockStupidoApplet
 		$screen->connect("window-opened", function($screen, $window) {
 			
 			if($window->get_window_type() == \WnckWindow::NORMAL) {
-				// echo "(" . $window->get_name() . ")" . $window->get_window_type() . "\n";
-
+				
 				// Recupera os dados da janela
 				$id = $window->get_xid();
 				$buff = $window->get_icon();
+				$name = $window->get_name();
+
+				// Get desktop file
+				$desktopFile = $this->getDesktopFile($name);
+
+				// Verify if .desktop exists
+				if(file_exists($desktopFile)) {
+					// Verify if 
+
+
+					$canpin = TRUE;
+				}
+				else {
+					$canpin = FALSE;
+				}
+
+
+
+
+
 
 				// Faz o hook para mudança de nome
 				$window->connect("name-changed", function($group, $window) {

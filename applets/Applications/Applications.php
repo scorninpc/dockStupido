@@ -23,7 +23,7 @@ class applications extends dockStupidoApplet
 	public function doAfterCreateButton($button) 
 	{
 		// Add the icon
-		$this->setIconName("start-here");
+		$this->setIconName("start-here-symbolic");
 
 		// Parse categories from mate
 		$systemCategories = $this->_parseSystemCategories("/etc/xdg/menus/mate-applications.menu");
