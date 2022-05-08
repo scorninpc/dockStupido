@@ -1,5 +1,7 @@
 # dockStupido
 
+### NOTE: Some problems may occur on some distros, please report it!
+
 dockStupido is a PHP-GTK dock, first write for Mate, but we planning to extend to others WM.
 
 ## Why?
