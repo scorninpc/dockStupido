@@ -104,6 +104,8 @@ class taskList extends dockStupidoApplet
 	 */
 	public function doAfterShow()
 	{
+		// @todo use dbus-monitor to get launched tasks
+
 		// $screen = WnckScreen::get_default();
 
 		// // On change window active state
