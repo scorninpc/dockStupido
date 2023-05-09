@@ -58,15 +58,8 @@ class dockStupido
 
 		// posix_setsid();
 
-
-
-
-
-
-		$this->language = file_get_contents(getenv("HOME") . "/.config/user-dirs.locale");
-		
-		// $todo Load config from file
-		$this->_config1 = [
+		// default config
+		$this->_config = [
 			'interface' => [
 				'icon_size' => 24,											// Size of icon
 				'transparent' => TRUE,										// Transparent or gtk theme
@@ -78,6 +71,17 @@ class dockStupido
 			],
 			'debug' => FALSE,												// Open GTK Debug window
 		];
+
+		// load locale
+		$this->language = file_get_contents(getenv("HOME") . "/.config/user-dirs.locale");
+		
+		// save config if first time
+		$this->config_file = DOCK_CONFIG_PATH . "/config.json";
+		if(!file_exists($this->config_file)) {
+			mkdir(DOCK_CONFIG_PATH);
+			touch($this->config_file);
+			file_put_contents($this->config_file, json_encode($this->_config));
+		}
 
 		// Load config
 		$this->loadConfig();
@@ -118,9 +122,16 @@ class dockStupido
 		// Show the window
 		$this->widgets['dock']->show_all();
 
+		$display = GdkDisplay::get_default();;
+		$monitor = $display->get_primary_monitor();
+
+		$area = $monitor->get_workarea();
+		$this->screen_width = $area['width'];
+		$this->screen_height = $area['height'];
+
 		// Recupera os tamanhos da tela
-		$this->screen_width = exec("xrandr -q | head -n2 | tail -n1 | awk '{print \$4}' | awk -F'[+]' '{print \$1}' | awk -F'[x]' '{print \$1}'");
-		$this->screen_height = exec("xrandr -q | head -n2 | tail -n1 | awk '{print \$4}' | awk -F'[+]' '{print \$1}' | awk -F'[x]' '{print \$2}'");
+		// $this->screen_width = exec("xrandr -q | head -n2 | tail -n1 | awk '{print \$4}' | awk -F'[+]' '{print \$1}' | awk -F'[x]' '{print \$1}'");
+		// $this->screen_height = exec("xrandr -q | head -n2 | tail -n1 | awk '{print \$4}' | awk -F'[+]' '{print \$1}' | awk -F'[x]' '{print \$2}'");
 		
 		// Recupera o window id
 		$this->pid = exec("xdotool search --name '^" . $this->title . "\$'");
@@ -169,7 +180,7 @@ class dockStupido
 	public function loadApplets()
 	{
 		// @todo Get this applets from config file, who will save applets list
-		$this->_config1['applets'] = [
+		$this->_config['applets'] = [
 			['name'=>"taskList", 'config'=>[]],
 			['name'=>"shutdown", 'config'=>[]],
 		];
@@ -285,6 +296,7 @@ class dockStupido
 						break;
 					
 					case \dockStupido::DOCK_POSITION_LOCATED:
+
 						$position_top = (int)(($this->screen_height * $this->_config['interface']['position_location']) / 100);
 						if(($position_top + $current_dock_size['height']) > $this->screen_height) {
 							$position_top = $this->screen_height - $current_dock_size['height'] - $this->_config['interface']['space'];
@@ -374,7 +386,7 @@ class dockStupido
 
 
 		// Save file
-		file_put_contents(DOCK_CONFIG_PATH . "/config.json", json_encode($config));
+		file_put_contents($this->config_file, json_encode($config));
 	}
 
 	/**
@@ -387,7 +399,7 @@ class dockStupido
 		}
 
 		// Load file
-		$this->_config = json_decode(file_get_contents(DOCK_CONFIG_PATH . "/config.json"), TRUE);
+		$this->_config = json_decode(file_get_contents($this->config_file), TRUE);
 	}
 }
 
