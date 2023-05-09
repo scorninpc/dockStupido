@@ -43,8 +43,7 @@ class taskList extends dockStupidoApplet
 		$this->tasksArea->set_spacing($this->getDock()->getConfig()['interface']['space']);
 
 		// Load pinneds
-		$pinned = $this->getConfig()['pinned'];
-		$pinned = [];
+		$pinned = $this->getConfig()['pinned']??[];
 		foreach($pinned as $desktopFile) {
 			$content = parse_ini_file($desktopFile, FALSE, INI_SCANNER_RAW);
 
@@ -105,145 +104,145 @@ class taskList extends dockStupidoApplet
 	 */
 	public function doAfterShow()
 	{
-		$screen = WnckScreen::get_default();
+		// $screen = WnckScreen::get_default();
 
-		// On change window active state
-		$screen->connect("active-window-changed", function($screen, $window) {
+		// // On change window active state
+		// $screen->connect("active-window-changed", function($screen, $window) {
 
-			// Get previous actived window
-			$id = $window->get_xid();
-			if(isset($this->taskButtons[$id])) {
-				// Add css style 
-				$style_context = $this->taskButtons[$id]->get_style_context();
-				$style_context->remove_class("actived");
-			}
+		// 	// Get previous actived window
+		// 	$id = $window->get_xid();
+		// 	if(isset($this->taskButtons[$id])) {
+		// 		// Add css style 
+		// 		$style_context = $this->taskButtons[$id]->get_style_context();
+		// 		$style_context->remove_class("actived");
+		// 	}
 
-			// Get the active window
-			$active = $screen->get_active_window();
-			if($active != NULL) {
-				$id = $active->get_xid();
-				if(isset($this->taskButtons[$id])) {
-					// Add css style 
-					$style_context = $this->taskButtons[$id]->get_style_context();
-					$style_context->add_class("actived");
-				}
-			}
-		});
+		// 	// Get the active window
+		// 	$active = $screen->get_active_window();
+		// 	if($active != NULL) {
+		// 		$id = $active->get_xid();
+		// 		if(isset($this->taskButtons[$id])) {
+		// 			// Add css style 
+		// 			$style_context = $this->taskButtons[$id]->get_style_context();
+		// 			$style_context->add_class("actived");
+		// 		}
+		// 	}
+		// });
 
-		// On some window close
-		$screen->connect("window-closed", function($screen, $window) {
-			// Recupera os dados da janela
-			$id = $window->get_xid();
-			if(isset($this->taskButtons[$id])) {
-				$this->taskButtons[$id]->destroy();
-				$this->tasksArea->show_all();
+		// // On some window close
+		// $screen->connect("window-closed", function($screen, $window) {
+		// 	// Recupera os dados da janela
+		// 	$id = $window->get_xid();
+		// 	if(isset($this->taskButtons[$id])) {
+		// 		$this->taskButtons[$id]->destroy();
+		// 		$this->tasksArea->show_all();
 
-				// Resize and re-place the dock
-				switch($this->getDock()->getConfig()['interface']['side']) {
-					case \dockStupido::DOCK_SIDE_LEFT:
-					case \dockStupido::DOCK_SIDE_RIGHT:
-						$this->getDock()->widgets['dock']->resize($this->getDock()->width, 1);
-						break;
-					case \dockStupido::DOCK_SIDE_TOP:
-					case \dockStupido::DOCK_SIDE_BOTTOM:
-						$this->getDock()->widgets['dock']->resize(1, $this->getDock()->height);
-						break;
-				}
+		// 		// Resize and re-place the dock
+		// 		switch($this->getDock()->getConfig()['interface']['side']) {
+		// 			case \dockStupido::DOCK_SIDE_LEFT:
+		// 			case \dockStupido::DOCK_SIDE_RIGHT:
+		// 				$this->getDock()->widgets['dock']->resize($this->getDock()->width, 1);
+		// 				break;
+		// 			case \dockStupido::DOCK_SIDE_TOP:
+		// 			case \dockStupido::DOCK_SIDE_BOTTOM:
+		// 				$this->getDock()->widgets['dock']->resize(1, $this->getDock()->height);
+		// 				break;
+		// 		}
 				
 				
-				// Move dock
-				Gtk::timeout_add(100, function() {
-					$this->getDock()->dockMove();
-					return FALSE;
-				});
-			}
-		});
+		// 		// Move dock
+		// 		Gtk::timeout_add(100, function() {
+		// 			$this->getDock()->dockMove();
+		// 			return FALSE;
+		// 		});
+		// 	}
+		// });
 
-		// On wew window open
-		$screen->connect("window-opened", function($screen, $window) {
+		// // On wew window open
+		// $screen->connect("window-opened", function($screen, $window) {
 			
-			if($window->get_window_type() == \WnckWindow::NORMAL) {
+		// 	if($window->get_window_type() == \WnckWindow::NORMAL) {
 				
-				// Recupera os dados da janela
-				$id = $window->get_xid();
-				$buff = $window->get_icon();
-				$name = $window->get_name();
+		// 		// Recupera os dados da janela
+		// 		$id = $window->get_xid();
+		// 		$buff = $window->get_icon();
+		// 		$name = $window->get_name();
 
-				// Get desktop file
-				$desktopFile = $this->getDesktopFile($name);
+		// 		// Get desktop file
+		// 		$desktopFile = $this->getDesktopFile($name);
 
-				// Verify if .desktop exists
-				if(file_exists($desktopFile)) {
-					// Verify if 
-
-
-					$canpin = TRUE;
-				}
-				else {
-					$canpin = FALSE;
-				}
+		// 		// Verify if .desktop exists
+		// 		if(file_exists($desktopFile)) {
+		// 			// Verify if 
 
 
+		// 			$canpin = TRUE;
+		// 		}
+		// 		else {
+		// 			$canpin = FALSE;
+		// 		}
 
 
 
 
-				// Faz o hook para mudança de nome
-				$window->connect("name-changed", function($group, $window) {
-					$id = $window->get_xid();
-					$this->taskButtons[$id]->set_tooltip_text($window->get_name());
-				}, $window);
 
-				// Scale the icon and add to GtkImage
-				$buff = $buff->scale_simple(24, 24, \GdkInterpType::HYPER);
-				$image = \GtkImage::new_from_pixbuf($buff);
 
-				// Create the button
-				$this->taskButtons[$id] = new \GtkButton();
-				$this->taskButtons[$id]->set_image($image);
-				$this->taskButtons[$id]->set_tooltip_text($window->get_name());
+		// 		// Faz o hook para mudança de nome
+		// 		$window->connect("name-changed", function($group, $window) {
+		// 			$id = $window->get_xid();
+		// 			$this->taskButtons[$id]->set_tooltip_text($window->get_name());
+		// 		}, $window);
 
-				// Add the click event
-				$this->taskButtons[$id]->connect("clicked", [$this, "taskButton_clicked"], $window);
-				$this->taskButtons[$id]->connect("button_press_event", [$this, "taskButton_buttonpress"], $window);
+		// 		// Scale the icon and add to GtkImage
+		// 		$buff = $buff->scale_simple(24, 24, \GdkInterpType::HYPER);
+		// 		$image = \GtkImage::new_from_pixbuf($buff);
 
-				// Add css style 
-				$style_context = $this->taskButtons[$id]->get_style_context();
-				$style_context->add_provider($this->getCssProvider(), 600);
-				$style_context->add_class($this->direction_class);
-				$style_context->add_class("marked");
+		// 		// Create the button
+		// 		$this->taskButtons[$id] = new \GtkButton();
+		// 		$this->taskButtons[$id]->set_image($image);
+		// 		$this->taskButtons[$id]->set_tooltip_text($window->get_name());
 
-				// Verify if is actived
-				if($window->is_active()) {
-					$style_context->add_class("actived");
-				}
+		// 		// Add the click event
+		// 		$this->taskButtons[$id]->connect("clicked", [$this, "taskButton_clicked"], $window);
+		// 		$this->taskButtons[$id]->connect("button_press_event", [$this, "taskButton_buttonpress"], $window);
+
+		// 		// Add css style 
+		// 		$style_context = $this->taskButtons[$id]->get_style_context();
+		// 		$style_context->add_provider($this->getCssProvider(), 600);
+		// 		$style_context->add_class($this->direction_class);
+		// 		$style_context->add_class("marked");
+
+		// 		// Verify if is actived
+		// 		if($window->is_active()) {
+		// 			$style_context->add_class("actived");
+		// 		}
 				
-				// Create the menu
-				$this->taskMenus[$id] = new \GtkMenu();
-					$menu_item = \GtkCheckMenuItem::new_with_label("Manter no dock"); 
-					$menu_item->connect("activate", [$this, "taskMenu_clicked"], 0, $window);
-					$this->taskMenus[$id]->append($menu_item);
+		// 		// Create the menu
+		// 		$this->taskMenus[$id] = new \GtkMenu();
+		// 			$menu_item = \GtkCheckMenuItem::new_with_label("Manter no dock"); 
+		// 			$menu_item->connect("activate", [$this, "taskMenu_clicked"], 0, $window);
+		// 			$this->taskMenus[$id]->append($menu_item);
 
-					$menu_item = \GtkMenuItem::new_with_label("Fechar"); 
-					$menu_item->connect("activate", [$this, "taskMenu_clicked"], 1, $window);
-					$this->taskMenus[$id]->append($menu_item);
-
-
-				$this->taskMenus[$id]->show_all();
-
-				// Pack, show and place docker to new locate
-				$this->tasksArea->pack_start($this->taskButtons[$id], TRUE, TRUE);
-				$this->tasksArea->show_all();
-
-				// Move dock
-				Gtk::timeout_add(100, function() {
-					$this->getDock()->dockMove();
-					return FALSE;
-				});
-			}
+		// 			$menu_item = \GtkMenuItem::new_with_label("Fechar"); 
+		// 			$menu_item->connect("activate", [$this, "taskMenu_clicked"], 1, $window);
+		// 			$this->taskMenus[$id]->append($menu_item);
 
 
-		});
+		// 		$this->taskMenus[$id]->show_all();
+
+		// 		// Pack, show and place docker to new locate
+		// 		$this->tasksArea->pack_start($this->taskButtons[$id], TRUE, TRUE);
+		// 		$this->tasksArea->show_all();
+
+		// 		// Move dock
+		// 		Gtk::timeout_add(100, function() {
+		// 			$this->getDock()->dockMove();
+		// 			return FALSE;
+		// 		});
+		// 	}
+
+
+		// });
 	}
 
 	/**
